@@ -7,27 +7,17 @@ var currentPosition;
 // Initialize and add the map
 function initMap() {
 
-  /* if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      currentPosition = {
-        //lat: position.coords.latitude,
-        //lng: position.coords.longitude
-        lat: 13.8260341,
-        lng: 100.420657
 
-      };
-    });
-  } */
   currentPosition = {
     //lat: position.coords.latitude,
     //lng: position.coords.longitude
-    lat: 13.8260341,
-    lng: 100.420657
+    lat: 13.637989,
+    lng: 100.4163633
   }
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: currentPosition,
-    zoom: 11,
+    zoom: 16,
     mapTypeId: 'roadmap',
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
@@ -35,6 +25,25 @@ function initMap() {
   });
 
   infoWindow = new google.maps.InfoWindow();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      var pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+
+      infoWindow.setPosition(pos);
+      infoWindow.setContent('Location found.');
+      infoWindow.open(map);
+      map.setCenter(pos);
+    }, function () {
+      handleLocationError(true, infoWindow, map.getCenter());
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    handleLocationError(false, infoWindow, map.getCenter());
+  }
 
   searchButton = document.getElementById("searchButton").onclick = searchLocations;
 
@@ -46,7 +55,18 @@ function initMap() {
       google.maps.event.trigger(markers[markerNum], 'click');
     }
   };
+
 }
+
+function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+  infoWindow.setPosition(pos);
+  infoWindow.setContent(browserHasGeolocation ?
+    'Error: The Geolocation service failed.' :
+    'Error: Your browser doesn\'t support geolocation.');
+  infoWindow.open(map);
+}
+
+
 
 function searchLocations() {
   var address = document.getElementById("addressInput").value;
@@ -80,7 +100,7 @@ function searchLocationsNear(center) {
   clearLocations();
 
   var radius = document.getElementById('radiusSelect').value;
-  var searchUrl = 'storelocator.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius;
+  var searchUrl = '/stores?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius;
   downloadUrl(searchUrl, function (data) {
     var xml = parseXml(data);
     var markerNodes = xml.documentElement.getElementsByTagName("marker");
