@@ -19,8 +19,6 @@ class ProfileController extends Controller
     {
 
         $this->middleware('auth');
-        $this->middleware('admin', ['only' => 'index']);
-
     }
 
     /**
@@ -29,27 +27,20 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index()
-    {
 
-        $profiles = Profile::paginate(10);
-        return view('profile.index', compact('profiles'));
-
-    }
 
     public function determineProfileRoute()
     {
 
         $profileExists = $this->profileExists();
+        $user = User::where('id', Auth::id())->first();
 
         if ($profileExists) {
 
-            return Redirect::route('show-profile');
-
+            return Redirect::route('show-profile', compact('user'));
         }
 
-        return view('profile.create');
-
+        return view('profile.create', compact('user'));
     }
 
     public function showProfileToUser()
@@ -59,19 +50,13 @@ class ProfileController extends Controller
         if (!$profile) {
 
             return Redirect::route('profile.create');
-
         }
 
         $user = User::where('id', $profile->user_id)->first();
 
-        if ($this->userNotOwnerOf($profile)) {
 
-            throw new UnauthorizedException;
-
-        }
 
         return view('profile.show', compact('profile', 'user'));
-
     }
 
     /**
@@ -83,15 +68,15 @@ class ProfileController extends Controller
     public function create()
     {
         $profileExists = $this->profileExists();
+        $user = User::where('id', Auth::id())->first();
+
 
         if ($profileExists) {
 
-            return Redirect::route('show-profile');
-
+            return Redirect::route('show-profile', compact('user'));
         }
 
-        return view('profile.create');
-
+        return view('profile.create', compact('user'));
     }
 
     /**
@@ -105,8 +90,9 @@ class ProfileController extends Controller
     {
 
         $this->validate($request, [
-            'first_name' => 'required|alpha_num|max:20',
-            'last_name' => 'required|alpha_num|max:20',
+            'first_name' => 'required|alpha_num|max:60',
+            'last_name' => 'required|alpha_num|max:60',
+            'mobile' => 'required|digits:10',
             'gender' => 'boolean|required',
             'birthdate' => 'date|required'
         ]);
@@ -116,12 +102,12 @@ class ProfileController extends Controller
         if ($profileExists) {
 
             return Redirect::route('show-profile');
-
         }
 
         $profile = Profile::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
+            'mobile' => $request->mobile,
             'gender' => $request->gender,
             'birthdate' => $request->birthdate,
             'user_id' => Auth::user()->id
@@ -131,7 +117,7 @@ class ProfileController extends Controller
 
         $user = User::where('id', '=', $profile->user_id)->first();
 
-        alert()->success('Congrats!', 'You made your profile');
+        //alert()->success('Congrats!', 'You made your profile');
 
         return view('profile.show', compact('profile', 'user'));
     }
@@ -149,14 +135,9 @@ class ProfileController extends Controller
 
         $user = User::where('id', $profile->user_id)->first();
 
-        if (!$this->adminOrCurrentUserOwns($profile)) {
 
-            throw new UnauthorizedException;
-
-        }
 
         return view('profile.show', compact('profile', 'user'));
-
     }
 
     /**
@@ -174,7 +155,6 @@ class ProfileController extends Controller
         if (!$this->adminOrCurrentUserOwns($profile)) {
 
             throw new UnauthorizedException;
-
         }
 
         return view('profile.edit', compact('profile'));
@@ -191,8 +171,9 @@ class ProfileController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'first_name' => 'required|alpha_num|max:20',
-            'last_name' => 'required|alpha_num|max:20',
+            'first_name' => 'required|alpha_num|max:60',
+            'last_name' => 'required|alpha_num|max:60',
+            'mobile' => 'required|digits:10',
             'gender' => 'boolean|required',
             'birthdate' => 'date|required'
         ]);
@@ -202,12 +183,12 @@ class ProfileController extends Controller
         if ($this->userNotOwnerOf($profile)) {
 
             throw new UnauthorizedException;
-
         }
 
         $profile->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
+            'mobile' => $request->mobile,
             'gender' => $request->gender,
             'birthdate' => $request->birthdate
         ]);
@@ -215,7 +196,6 @@ class ProfileController extends Controller
         alert()->success('Congrats!', 'You updated your profile');
 
         return Redirect::route('profile.show', ['profile' => $profile]);
-
     }
 
     /**
@@ -232,22 +212,15 @@ class ProfileController extends Controller
         if ($this->userNotOwnerOf($profile)) {
 
             throw new UnauthorizedException;
-
         }
 
         Profile::destroy($id);
 
-        if (Auth::user()->isAdmin()) {
 
-            alert()->overlay('Attention!', 'You deleted a profile', 'error');
 
-            return Redirect::route('profile.index');
-        }
-
-        alert()->overlay('Attention!', 'You deleted a profile', 'error');
+        //alert()->overlay('Attention!', 'You deleted a profile', 'error');
 
         return Redirect::route('home');
-
     }
 
     /**
@@ -261,7 +234,6 @@ class ProfileController extends Controller
             ->exists();
 
         return $profileExists;
-
     }
-
 }
+

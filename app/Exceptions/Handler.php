@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Exceptions\UnauthorizedException;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +47,23 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        switch ($exception) {
+
+
+
+            case $exception instanceof UnauthorizedException:
+
+                if ($request->ajax()) {
+                    return response()->json(['error' => 'Unauthorized'], 500);
+                }
+
+                return response()->view('errors.unauthorized-exception', compact('exception'), 500);
+                break;
+
+            default:
+
+                return parent::render($request, $exception);
+        }
+
     }
 }

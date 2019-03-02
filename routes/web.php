@@ -20,4 +20,23 @@ Route::get('/', function () {
 
 Route::get('/home', 'HomeController@index')->middleware('auth');
 
-Route::resource('profile', 'ProfileController')->names('profile');
+// Profile
+
+Route::get('show-profile', 'ProfileController@showProfileToUser')->name('show-profile');
+Route::get('determine-profile-route', 'ProfileController@determineProfileRoute')->name('determine-profile-route');
+Route::resource('profile', 'ProfileController');
+
+//setting
+Route::get('settings', 'SettingsController@settings')->name('settings');
+Route::post('settings', 'SettingsController@update')->name('user-update');
+
+//terms of service
+
+Route::get('/terms', 'PagesController@terms');
+
+
+//Create store geolocations
+
+Route::get('/stores/create', 'StoresController@create');
+Route::resource('stores', 'StoresController');
+

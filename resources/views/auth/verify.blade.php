@@ -16,9 +16,9 @@
                     </div>
                 @endif
 
-                <p class="text-white">
+                <p class="text-mstore">
                     {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }}, <a href="{{ route('verification.resend') }}" class="no-underline hover:underline text-gray-light">{{ __('click here to request another') }}</a>
+                    {{ __('If you did not receive the email') }}, <a href="{{ route('verification.resend') }}" class="no-underline text-mstore-lighter hover:text-white">{{ __('click here to request another') }}</a>
                 </p>
             </div>
         </div>

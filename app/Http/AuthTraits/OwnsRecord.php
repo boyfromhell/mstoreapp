@@ -20,7 +20,7 @@ trait OwnsRecord
 
     public function adminOrCurrentUserOwns($modelRecord)
     {
-        if (Auth::user()->is_admin == 1){
+        if (Auth::user()->role == 'admin') {
 
             return true;
         }
@@ -31,7 +31,7 @@ trait OwnsRecord
 
     public function allowUserUpdate($user)
     {
-        if (Auth::user()->isAdmin()) {
+        if (Auth::user()->role == 'admin') {
             return true;
         }
         return $user->id === Auth::id();
