@@ -12,90 +12,100 @@
 
 @section('content')
 
-<div class="flex-1  mx-auto items-center p-8">
-    <div class="w-full max-w-md md:mx-auto">
-        <div class="rounded shadow">
-            <div class="font-semibold text-base text-grey-lighter bg-mstore-dark p-2 rounded-t">
-                {{ __('Create Youe Profile') }}
-            </div>
-            <div class="bg-black p-3 rounded-b">
+    <form 
+        
+        class="w-full max-w-md bg-white shadow-md rounded-lg p-3 mx-auto py-4 mt-6 mb-6" 
+            method="POST" action="/profile">
+    
+        {{ csrf_field() }}
 
-                <form class="form-horizontal" method="POST" action="/profile">
-                {{ csrf_field() }}
-                <!-- first_name Form Input -->
-                    <div class="flex items-stretch mb-3">
-                        <label for="first_name" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">First Name</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="first_name" type="text" class="flex-grow h-8 px-2 border rounded {{ $errors->has('first_name') ? 'border-red-dark' : 'border-grey-light' }}" fist_name="first_name" value="{{ old('first_name') }}" autofocus>
-                            {!! $errors->first('first_name', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
-                    
+        @component('partials.heading')  
 
-                    <!-- last_name Form Input -->
-                    <div class="flex items-stretch mb-3">
-                        <label for="last_name" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">Last Name</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="last_name" type="text" class="flex-grow h-8 px-2 border rounded {{ $errors->has('last_name') ? 'border-red-dark' : 'border-grey-light' }}" fist_name="last_name" value="{{ old('last_name') }}" autofocus>
-                            {!! $errors->first('last_name', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
-                    
-                   
-
-                    <!-- birthdate Form Input -->
-                    <div class="flex items-stretch mb-3">
-                        <label for="birthdate" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">Birth date</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="birthdate" type="date" class="flex-grow h-8 px-2 border rounded {{ $errors->has('birthdate') ? 'border-red-dark' : 'border-grey-light' }}" fist_name="birthdate" value="{{ old('birthdate') }}" autofocus>
-                            {!! $errors->first('birthdate', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
-
-                    
-
-                    <!-- Gender Form Input -->
-                    <div class="flex items-stretch mb-3">
-                        <label for="birthdate" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">Gender</label>
-                        <div class="relative">
-                            <select class="block appearance-none w-full bg-grey-lighter border border-grey-lighter text-grey-darker py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-grey" id="gender" name="gender">
-                            
-                                <option value="{{old('gender')}}">
-                                    {{ ! is_null(old('gender')) ?
-                                    (old('gender') == 1 ? 'Male' :'Female')
-                                    : 'Please Choose One'}}</option>
-                                <option value="1">Male</option>
-                                <option value="0">Female</option>
-                                
-                            </select>
-
-                            @if ($errors->has('gender'))
-
-                                <span class="help-block">
-                                <strong>{{ $errors->first('gender') }}</strong>
-                                </span>
-
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="flex">
-                        <div class="w-3/4 ml-auto">
-                            <button type="submit" class="bg-mstore hover:bg-mstore-dark text-white text-base font-semibold py-2 px-4 rounded mr-3">
-                                {{ __('Create') }}
-                            </button>
-                        </div>
-                    </div>
-
-
-                    
-
-                </form>
-
-            </div>
+            {{ __('auth.Profile') }}        
+        
+        @endcomponent
+       
+        
+        <div class="flex md:flex-block mx-auto mb-auto  rounded" >
+            <div class="flex-1 mx-auto items-center">
+                <img src="{{  Storage::url($user->avatar) }}">            
+                <p class="text-center -mt-16 text-white font-semibold text-3xl">ID : {{ $user->id }}</p>
+            </div>                        
         </div>
-    </div>
-</div>
+        
+            
+        @if ($errors->any())
+        <p class="text-center font-semibold text-red my-3">
+            @if ($errors->has('first_name'))
+                {{ $errors->first('first_name') }}
+            @elseif ($errors->has('last_name'))
+                {{ $errors->first('last_name') }}
+            @elseif ($errors->has('mobile'))
+                {{ $errors->first('mobile') }}
+            @elseif ($errors->has('birthdate'))
+                {{ $errors->first('birthdate') }}       
+            @else
+                {{ $errors->first('gender') }}           
+            @endif
+        </p>        
+        @endif
+           
+        <div class="flex flex-wrap mt-8 ">               
+            <!-- first_name Form Input -->
+            <div class="w-full md:w-1/2 px-2 mb-2 md:mb-0 {{ $errors->has('first_name') ? ' has-error' : ''  }}">
+                <label  class="block font-bold mb-1" for="first_name">{{ __('auth.First name') }}</label>
+                <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="first_name" type="text"  name="first_name" value="{{ old('first_name') }}" required autofocus>
+            </div>
+                
+
+            <!-- last_name Form Input -->
+            <div class="w-full md:w-1/2 px-2 mb-2 md:mb-0 {{ $errors->has('last_name') ? ' has-error' : ''  }}">
+                <label  class="block font-bold mb-1" for="last_name">{{ __('auth.Last name') }}</label>
+                <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="last_name" type="text" name="last_name" value="{{ old('last_name') }}" required autofocus>
+            </div>
+        </div>    
+
+        <!-- Mobile Form Input -->
+    
+        <div class="px-2 mb-2 md:mb-0  {{ $errors->has('mobile') ? ' has-error' : ''  }}">
+            <label  class="block font-bold mb-1" for="mobile">{{ __('auth.Mobile No') }}</label>
+            <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="mobile" type="text" name="mobile" value="{{ old('mobile') }}"  autofocus>
+        </div>
+       
+
+        <div class="flex flex-wrap ">       
+            <!-- birthdate Form Input -->
+            <div class="w-full md:w-1/2 px-2 mb-2 md:mb-0 {{ $errors->has('birthdate') ? ' has-error' : ''  }}">
+                <label class="block font-bold mb-1" for="birthdate">{{__('auth.Birthdate')}}</label>
+                <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="birthdate" type="date"  name="birthdate" value="{{ old('birthdate') }}" autofocus required>
+            </div>
+            <!-- Gender Form Input -->
+            <div class="w-full md:w-1/2 px-2 mb-2 md:mb-0  {{ $errors->has('gender') ? ' has-error' : ''  }}">
+                <label class="block font-bold mb-1" for="birthdate">{{ __('auth.Gender') }}</label>
+                <select class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="gender" name="gender">            
+                    <option value="{{old('gender')}}">
+                        {{ ! is_null(old('gender')) ?
+                        (old('gender') == 1 ? 'Male' :'Female')
+                        : 'Please Choose One'}}</option>
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                        
+                </select>
+                 <button class= "w-full items-center bg-mstore hover:bg-mstore-dark text-black font-bold py-4 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                    {{ __('auth.Create') }}
+                 </button>
+            </div>
+
+        </div>
+    
+     
+    
+        
+        
+
+    </form>
+
+           
 @endsection
 
 @section('footer')

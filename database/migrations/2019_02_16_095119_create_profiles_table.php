@@ -18,7 +18,7 @@ class CreateProfilesTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->string('first_name', 60);
             $table->string('last_name', 60);
-            $table->tinyInteger('mobile')->unique();
+            $table->string('mobile', 10)->unique();
             $table->date('birthdate');
             $table->boolean('gender');
             $table->timestamps();

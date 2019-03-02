@@ -15,9 +15,11 @@ class AddRoleAndIsSubscribedToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('avatar')->after('email')->default('member.png');
-            $table->enum('role', ['admin', 'member'])->default('member')->after('email');
-            $table->boolean('is_subscribed')->default(false)->after('role');
-
+            $table->enum('role', ['admin', 'member', 'wholesaler', 'retailer'])->default('member');
+            $table->string('first_name', 60)->nullable();
+            $table->string('last_name', 60)->nullable();
+            $table->string('mobile', 10)->nullable();
+            $table->boolean('is_subscribed')->default(false);
         });
     }
 

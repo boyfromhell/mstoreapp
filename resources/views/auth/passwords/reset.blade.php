@@ -1,54 +1,40 @@
 @extends('layouts.app')
-@section('nav')
-    @include('partials.nav')
-@endsection
+
 @section('content')
-<div class="flex flex-wrap items-center py-32 px-6 py-32 md:px-0">
-    <div class="w-full max-w-md md:mx-auto">
-        <div class="rounded shadow">
-            <div class=" font-semibold text-base text-grey-lighter bg-mstore p-1 rounded-t">
-                {{ __('Reset Password') }}
-            </div>
-            <div class="bg-black p-3 rounded-b">
-                <form class="form-horizontal" method="POST" action="{{ route('password.request') }}">
-                    {{ csrf_field() }}
+@include('partials.header')
 
-                    <input type="hidden" name="token" value="{{ $token }}">
+    <form class="bg-white shadow-md rounded-lg p-4 max-w-login mx-auto" method="POST" action="{{ route('password.request') }}">
+        
+        {{ csrf_field() }}
 
-                    <div class="flex items-stretch mb-3">
-                        <label for="email" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">{{ __('E-Mail Address') }}</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="email" type="email" class="flex-grow h-8 px-2 border rounded {{ $errors->has('email') ? 'border-red-dark' : 'border-grey-light' }}" name="email" value="{{ $email or old('email') }}" required autofocus>
-                            {!! $errors->first('email', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
+        @component('partials.heading')
+        {{ __('passwords.Reset Password') }}
+        @endcomponent
 
-                    <div class="flex items-stretch mb-3">
-                        <label for="password" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">{{ __('Password') }}</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="password" type="password" class="flex-grow h-8 px-2 rounded border {{ $errors->has('password') ? 'border-red-dark' : 'border-grey-light' }}" name="password" required>
-                            {!! $errors->first('password', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
+        @include('partials.errors')
 
-                    <div class="flex items-stretch mb-3">
-                        <label for="password_confirmation" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">{{ __('Confirm Password') }}</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="password_confirmation" type="password" class="flex-grow h-8 px-2 rounded border {{ $errors->has('password_confirmation') ? 'border-red-dark' : 'border-grey-light' }}" name="password_confirmation" required>
-                            {!! $errors->first('password_confirmation', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
+        <input type="hidden" name="token" value="{{ $token }}">
 
-                    <div class="flex">
-                        <div class="w-3/4 ml-auto">
-                            <button type="submit" class="bg-mstore hover:bg-mstore-dark text-white text-base font-semibold py-2 px-4 rounded mr-3">
-                                {{ __('Reset Password') }}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        <div class="mb-6 {{ $errors->has('email') ? ' has-error' : '' }}">
+            <label class="block font-bold mb-2" for="email">{{ __('auth.email') }}</label>
+            <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="email" type="email" name="email" value="{{ $email or old('email') }}" required autofocus>
+            
         </div>
-    </div>
-</div>
+
+        <div class="mb-6 {{ $errors->has('password') ? ' has-error' : '' }}">
+            <label class="block font-bold mb-2" for="password">{{ __('auth.password') }}</label>
+            <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="password" type="password" name="password" required>           
+        </div>
+
+        <div class="mb-6 {{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
+            <label class="block font-bold mb-2" for="password_confirmation" >{{ __('auth.Confirm Password') }}</label>
+            <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="password_confirmation" type="password"  name="password_confirmation" required>
+        </div>
+
+        <button class="w-full bg-mstore hover:bg-mstore-dark text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" >
+                    {{ __('passwords.Reset Password') }}
+        </button>
+        
+    </form>
+            
 @endsection

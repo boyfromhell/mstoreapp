@@ -1,53 +1,55 @@
 @extends('layouts.app')
-@section('nav')
-    @include('partials.nav')
-@endsection
+
+
 @section('content')
-<div class="flex flex-wrap items-center px-6 py-32 md:px-0">
-    <div class="w-full max-w-md md:mx-auto">
-        <div class="rounded shadow">
-            <div class="font-base text-base text-white bg-mstore p-2 rounded-t">
-                {{ __('auth.Login') }}
-            </div>
-            <div class="bg-black p-3 rounded-b">
-                <form class="form-horizontal" method="POST" action="{{ route('login') }}">
-                    {{ csrf_field() }}
 
-                    <div class="flex items-stretch mb-3">
-                        <label for="email" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">{{ __('auth.email') }}</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="email" type="email" class="flex-grow h-8 px-2 border rounded {{ $errors->has('email') ? 'border-red-dark' : 'border-grey-light' }}" name="email" value="{{ old('email') }}" required autofocus>
-                            {!! $errors->first('email', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
+@include('partials.header')
 
-                    <div class="flex items-stretch mb-4">
-                        <label for="password" class="text-right font-semibold text-grey-dark text-sm pt-2 pr-3 align-middle w-1/4">{{ __('auth.password') }}</label>
-                        <div class="flex flex-col w-3/4">
-                            <input id="password" type="password" class="flex-grow h-8 px-2 rounded border {{ $errors->has('password') ? 'border-red-dark' : 'border-grey-light' }}" name="password" required>
-                            {!! $errors->first('password', '<span class="text-red-dark text-sm mt-2">:message</span>') !!}
-                        </div>
-                    </div>
+<form 
+    class="bg-white shadow-md rounded-lg p-4 max-w-login mx-auto" method="POST" action="{{ route('login') }}">
 
-                    <div class="flex mb-4">
-                        <label class="w-3/4 ml-auto">
-                            <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> <span class="text-sm text-grey-dark"> {{ __('auth.remember me') }}</span>
-                        </label>
-                    </div>
+    {{ csrf_field() }}
+    @component('partials.heading')
+        {{ __('auth.Login') }}
+    @endcomponent
 
-                    <div class="flex">
-                        <div class="w-3/4 ml-auto">
-                            <button type="submit" class="bg-mstore hover:bg-mstore-dark text-white text-base  py-2 px-4 rounded mr-3">
-                                {{ __('auth.Login') }}
-                            </button>
-                            <a class="no-underline hover:underline text-grey-light text-sm" href="{{ route('password.request') }}">
-                                {{ __('auth.forgot your password?') }}
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    @if ($errors->any())
+        <p class="text-center font-semibold text-red my-3">
+            @if ($errors->has('email'))
+            {{ $errors->first('email') }}
+            @else
+            {{ $error->first('password') }}           
+            @endif
+        </p>
+        
+    @endif
+
+    <div class="mb-1 {{ $errors->has('email') ? ' has-error' : ''  }}">
+        <label  class="block font-bold mb-1" for="email">{{ __('auth.email') }}</label>
+        <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="email" type="email"  name="email" value="{{ old('email') }}" required autofocus>
+    </div>
+
+    <div class="mb-1 {{ $errors->has('password') ? 'has-error' : '' }}">
+        <label class="block font_bold mb-1" for="password">{{ __('auth.password') }}</label>  
+        <input class="w-full px-4 h-10 border-2 focus:border-mstore rounded-lg bg-white text-grey-darker outline-none mb-3 border-grey-light" id="password" type="password" name="password" required>
+    </div>
+
+    <div class="flex mb-6">
+        <label class="flex items-center block text-xl font-bold">
+            <input class="" type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> 
+            <span class="text-base text-grey-dark ml-2"> {{ __('auth.remember me') }}</span>
+        </label>
+        <div class="ml-auto">
+            <a class=" text-grey-darker font-bold no-underline hover:text-mstore" href="{{ route('password.request') }}">
+                {{ __('auth.forgot your password?') }}
+            </a>
         </div>
     </div>
-</div>
+
+    <button class="w-full bg-mstore hover:bg-mstore-dark text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" >
+        {{ __('auth.Login') }}
+    </button>
+        
+ </form>
+         
 @endsection
